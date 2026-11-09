@@ -108,3 +108,14 @@ Al principio del script de `index.html` está el objeto `CONFIG`:
 - Escaneo del guante: CreativeTools, CC BY-SA 4.0 (ver `CREDITOS.md`).
 - MediaPipe Hands: Apache 2.0 (Google), en `vendor/mediapipe-hands/`.
 - three.js: MIT, en `vendor/three/`.
+
+## Versión iterada (TPO · punto 4.f)
+
+Esta rama (`iteracion-final`) es la versión final **iterada** del prototipo. La versión final anterior sigue intacta en `main`.
+Cambios, cada uno nacido de una prueba de usabilidad:
+
+| Pantalla | Cambio | Origen |
+|---|---|---|
+| AR 4 · Elegí qué guante probarte | Cada card suma material y uso recomendado, y una línea que explica por qué cambia el precio | P1 (“¿Qué cambia?”) |
+| AR 8 · Tu foto con Tempo | El botón “Instagram” pasa a llamarse “Compartir” (abre el menú del celular y la persona elige el canal) | P3 |
+| Carga inicial y de cámara | Pantalla de carga con barra de progreso real (descarga del guante 3D) y “Paso 1 de 2 / 2 de 2” al abrir cámara y detector | P2 |

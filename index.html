@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111111">
-<title>Tempo · Probador AR</title>
+<title>Tempo · Probador AR · versión iterada</title>
 <link rel="stylesheet" href="vendor/fonts/fonts.css">
 <style>
 /* Sistema visual del UI Kit "Tempo · Probador AR" (fondo oscuro, acento ámbar, emblema dorado y rojo,
@@ -181,6 +181,28 @@ p{margin:0}
 .msg-card .cam-badge svg{width:28px;height:28px}
 @media (prefers-reduced-motion:reduce){.spin,.hand-anim .open,.hand-anim .fist,.guide .scanline{animation:none}.hand-anim .fist{opacity:0}}
 @media (min-width:900px){ .cam-ui .sheet,.cam-ui .scan-text{max-width:460px;margin-left:auto;margin-right:auto;border-radius:28px 28px 0 0} }
+
+/* ---- Iteración final (4.f) ---- */
+/* P2: pantalla de carga inicial con indicador */
+.boot{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center;
+  background:radial-gradient(circle at 0% 40%,var(--glow),rgba(130,22,14,0) 45%),var(--bg);transition:opacity .35s ease}
+.boot.done{opacity:0;pointer-events:none}
+.boot .brandmark{font-size:20px} .boot .brandmark svg{width:44px;height:44px}
+.boot .pbar{width:min(280px,70vw)}
+.boot .boot-tx{font-size:14px;line-height:20px;color:var(--support2);min-height:20px}
+.boot .boot-tx b{color:var(--fg);font-variant-numeric:tabular-nums}
+.boot .boot-slow{font-size:13px;line-height:18px;color:var(--fg2);max-width:300px}
+.pbar{height:6px;border-radius:6px;background:var(--line);overflow:hidden}
+.pbar>span{display:block;height:100%;width:0;border-radius:6px;background:var(--accent);transition:width .25s ease}
+.pbar.indet>span{width:40%;animation:ind 1.3s ease-in-out infinite}
+@keyframes ind{0%{transform:translateX(-100%)}100%{transform:translateX(260%)}}
+.loading .pbar{width:min(240px,60vw)}
+.loading .step{font:700 12px/16px var(--body);letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+/* P1: cada modelo explica qué lo hace distinto */
+.model .what{font-size:13px;line-height:18px;color:var(--support);margin-top:2px}
+.model .what b{font-weight:700;color:var(--fg)}
+.why-price{display:flex;gap:10px;align-items:flex-start}
+@media (prefers-reduced-motion:reduce){.pbar.indet>span{animation:none;width:60%}.boot{transition:none}}
 </style>
 </head>
 <body>
@@ -200,8 +222,17 @@ p{margin:0}
   <symbol id="i-help" viewBox="0 0 24 24"><path d="M9.2 9.2a2.9 2.9 0 115.1 1.9c-1 .9-2.3 1.5-2.3 3.2M12 18h.01" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v6M12 7.5h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V4M8 8l4-4 4 4M5 13v6h14v-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2l2.2 10.2a1.5 1.5 0 001.5 1.2h8.6a1.5 1.5 0 001.5-1.1L21 8H6.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9.5" cy="19.5" r="1.3" fill="currentColor"/><circle cx="17" cy="19.5" r="1.3" fill="currentColor"/></symbol>
 </svg>
+
+<!-- Carga inicial (iteración P2): indicador mientras se prepara el guante 3D -->
+<div class="boot" id="boot" role="status" aria-live="polite">
+  <span class="brandmark"><svg aria-hidden="true"><use href="#emblem"/></svg>TEMPO</span>
+  <div class="pbar" role="progressbar" aria-label="Carga del probador" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="boot-fill"></span></div>
+  <p class="boot-tx"><span id="boot-tx">Preparando el probador…</span> <b id="boot-pct">0%</b></p>
+  <p class="boot-slow" id="boot-slow" hidden>Está tardando más de lo normal. Revisá tu conexión: en cuanto termine de cargar, empezamos.</p>
+</div>
 
 <!-- AR 1 · Intro -->
 <section class="screen" id="s-intro" aria-labelledby="t-intro">
@@ -221,7 +252,7 @@ p{margin:0}
       <button class="link amber" id="know-oz">Ya sé mis onzas</button>
       <div class="notice" id="file-notice" hidden><svg><use href="#i-info"/></svg><span>Abriste el archivo directamente: las preguntas funcionan, pero para usar la cámara hay que abrirlo desde un servidor o una dirección https. Mirá el archivo LEEME.</span></div>
       <p class="privacy"><svg><use href="#i-lock"/></svg>No guardamos fotos ni video de tu cámara.</p>
-      <p class="credit" id="scan-credit">Prototipo de UX (UADE).</p>
+      <p class="credit" id="scan-credit">Prototipo de UX (UADE) · versión iterada.</p>
     </div>
   </div>
 </section>
@@ -271,6 +302,7 @@ p{margin:0}
     <div class="card result" id="reco-box"></div>
     <div class="notice" id="oz-notice" hidden><svg><use href="#i-info"/></svg><span id="oz-notice-tx"></span></div>
     <p class="caption" style="font-size:14px">Elegí qué guante probarte</p>
+    <p class="muted" id="why-price">Cambian el material, el cierre y el uso recomendado; por eso varía el precio.</p>
     <div class="chips-col" role="radiogroup" aria-label="Modelos" id="models"></div>
     <div class="footer"><button class="btn" id="reco-next">Probarme el guante</button><p class="muted" style="text-align:center">Guía orientativa: si tenés dudas, consultá con tu entrenador.</p></div>
   </div>
@@ -356,7 +388,7 @@ p{margin:0}
     <img class="photo" id="photo-img" alt="Foto con el guante Tempo puesto">
     <div class="actions3">
       <a class="btn sec" id="photo-save" download="tempo-probador.jpg" href="#">Guardar</a>
-      <button class="btn sec" id="photo-share">Instagram</button>
+      <button class="btn sec" id="photo-share"><svg aria-hidden="true"><use href="#i-share"/></svg>Compartir</button>
       <button class="btn sec" id="photo-redo">Repetir</button>
     </div>
     <div class="footer"><button class="btn" id="photo-cart">Agregar al carrito</button></div>
@@ -398,7 +430,7 @@ p{margin:0}
 <section class="screen" id="s-msg" hidden aria-live="polite">
   <div class="wrap">
     <div class="bar"><button class="icon-btn" id="msg-back" aria-label="Volver"><svg><use href="#i-back"/></svg></button><span class="kick">Volver</span></div>
-    <div class="loading" id="msg-loading"><div class="spin"></div><p id="msg-loading-tx">Cargando el detector de manos…</p></div>
+    <div class="loading" id="msg-loading"><div class="spin"></div><p class="step" id="msg-step">Paso 1 de 2</p><div class="pbar" id="msg-prog" role="progressbar" aria-label="Preparando la cámara" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><span id="msg-fill" style="width:50%"></span></div><p id="msg-loading-tx">Cargando el detector de manos…</p></div>
     <div class="card msg-card" id="msg-error" hidden>
       <div class="cam-badge"><svg><use href="#i-info"/></svg></div>
       <h2 id="msg-title"></h2>
@@ -437,11 +469,11 @@ p{margin:0}
 const CONFIG = {
   models: {
     // fullName, tagline, largo y zonas del Elite: ficha técnica y textos del UI Kit
-    elite: { name:'Tempo Elite', fullName:'Tempo Elite – Guantes de Cuero con Cordones', cierre:'cordones', desc:'Cordones · Peleas y sparring de alto nivel', tagline:'Ajuste ceñido, de competencia.', material:'Cuero genuino', price:209999, largo:'43 cm',
+    elite: { pitch:'Ajuste ceñido, de competencia', name:'Tempo Elite', fullName:'Tempo Elite – Guantes de Cuero con Cordones', cierre:'cordones', desc:'Cordones · Peleas y sparring de alto nivel', tagline:'Ajuste ceñido, de competencia.', material:'Cuero genuino', price:209999, largo:'43 cm',
              zones:[ {k:'Zona 1 · Puño', t:'Puño de cuero genuino', d:'Firme en la muñeca y resistente al uso exigente.'}, {k:'Zona 2 · Material', t:'100% cuero genuino premium', d:'Cierre con cordones tradicionales.'} ] },
-    pro:   { name:'Tempo Pro',   cierre:'velcro',   desc:'Velcro reforzado · Entrenamiento diario y sparring', material:'Cuero', price:168999,
+    pro:   { pitch:'Entrenamiento diario y sparring', name:'Tempo Pro',   cierre:'velcro',   desc:'Velcro reforzado · Entrenamiento diario y sparring', material:'Cuero', price:168999,
              zones:[ {k:'Zona 1 · Puño', t:'Cierre de velcro reforzado', d:''}, {k:'Zona 2 · Material', t:'Cuero', d:''} ] },
-    fit:   { name:'Tempo Fit',   cierre:'velcro',   desc:'Velcro ajustable · Clases y principiantes', material:'Sintético', price:132999,
+    fit:   { pitch:'Clases y principiantes', name:'Tempo Fit',   cierre:'velcro',   desc:'Velcro ajustable · Clases y principiantes', material:'Sintético', price:132999,
              zones:[ {k:'Zona 1 · Puño', t:'Cierre de velcro ajustable', d:''}, {k:'Zona 2 · Material', t:'Sintético', d:''} ] }
   },
   // Talles con stock por modelo. En el MVP todos figuran en 16 oz: actualizar cuando haya más talles.
@@ -490,12 +522,23 @@ function drawGlove2D(canvas, colorKey){
   g.restore();
 }
 /* El motor 3D se carga aparte: si falla (archivo abierto directamente, sin WebGL o sin la carpeta vendor), el resto de la app sigue andando */
+/* Pantalla de carga inicial (iteración P2): barra con porcentaje real; el 3D pesa ~2,5 MB y antes no había ningún aviso */
+const boot = (() => {
+  const el=$('boot'), fill=$('boot-fill'), pct=$('boot-pct'), tx=$('boot-tx'), bar=el.querySelector('[role=progressbar]'); let p=0, closed=false;
+  const set = (v, t) => { if (closed) return; p=Math.max(p,Math.min(1,v)); fill.style.width=(p*100)+'%'; const n=Math.round(p*100); pct.textContent=n+'%'; bar.setAttribute('aria-valuenow', n); if (t) tx.textContent=t; };
+  const done = () => { if (closed) return; set(1); closed=true; setTimeout(() => { el.classList.add('done'); setTimeout(() => el.remove(), 400); }, 150); };
+  setTimeout(() => { if (!closed) $('boot-slow').hidden=false; }, 6000);
+  setTimeout(done, 30000); // si algo se cuelga, no se bloquea la app
+  set(0.05, 'Preparando el probador…');
+  return { set, done };
+})();
 const ready3D = (async () => {
-  if (!HAS_WEBGL) return false;
-  try { G3 = await import('./glove3d.js'); THREE = G3.THREE; await G3.prepare(CONFIG); CAN_3D = true;
-    G3.modelInfo().then(c => { if (!c) return; const el = $('scan-credit'); el.innerHTML = `Prototipo de UX (UADE). Forma del guante: escaneo 3D <a href="${c.source}" target="_blank" rel="noopener">“${c.title}”</a>, licencia <a href="${c.licenseUrl}" target="_blank" rel="noopener">${c.license}</a>, adaptado con el diseño de Tempo.`; });
-    return true; }
-  catch (e) { console.warn('3D no disponible:', e); return false; }
+  if (!HAS_WEBGL) { boot.done(); return false; }
+  try { boot.set(0.1, 'Cargando el motor 3D…'); G3 = await import('./glove3d.js'); THREE = G3.THREE; boot.set(0.3, 'Preparando materiales…'); await G3.prepare(CONFIG); CAN_3D = true;
+    boot.set(0.4, 'Cargando el guante…'); if (G3.onLoadProgress) G3.onLoadProgress(f => boot.set(0.4 + 0.58*f, 'Cargando el guante…'));
+    await G3.modelInfo().then(c => { if (!c) return; const el = $('scan-credit'); el.innerHTML = `Prototipo de UX (UADE) · versión iterada. Forma del guante: escaneo 3D <a href="${c.source}" target="_blank" rel="noopener">“${c.title}”</a>, licencia <a href="${c.licenseUrl}" target="_blank" rel="noopener">${c.license}</a>, adaptado con el diseño de Tempo.`; });
+    boot.done(); return true; }
+  catch (e) { console.warn('3D no disponible:', e); boot.done(); return false; }
 })();
 ready3D.then(ok => { if (!ok) return; if (current === 's-intro') hero.start(); if (current === 's-reco') renderModels(); });
 let current = 's-intro';
@@ -602,7 +645,7 @@ function renderModels(){
   Object.entries(CONFIG.models).forEach(([key,m]) => {
     const b = document.createElement('button'); b.className='card model'; b.setAttribute('role','radio'); b.setAttribute('aria-checked', String(key===S.model));
     const av = availableOz(key), cierre = m.desc.split(' · ')[0].split(' ')[0];
-    b.innerHTML = `<span class="r1"><strong>${m.name}</strong>${key===ideal?'<span class="tag">Ideal</span>':''}</span><span class="meta">${cierre} · ${av.join(', ')} Oz</span><span class="r3"><b>${money(m.price)}</b><span class="ok-tx">En stock</span></span>`;
+    b.innerHTML = `<span class="r1"><strong>${m.name}</strong>${key===ideal?'<span class="tag">Ideal</span>':''}</span><span class="meta">${cierre} · ${av.join(', ')} Oz</span><span class="what"><b>${m.material}</b> · ${m.pitch}</span><span class="r3"><b>${money(m.price)}</b><span class="ok-tx">En stock</span></span>`;
     b.onclick = () => { S.model=key; wrap.querySelectorAll('.model').forEach(x=>x.setAttribute('aria-checked', String(x===b))); updateOzNotice(); $('reco-next').textContent = 'Probarme el ' + m.name; };
     wrap.appendChild(b);
   });
@@ -668,7 +711,13 @@ function initHands(){
   return handsReady;
 }
 
-function showLoading(text){ go('s-msg'); $('msg-loading').hidden=false; $('msg-error').hidden=true; $('msg-loading-tx').textContent=text; $('msg-back').onclick=()=>go('s-perm'); }
+function showLoading(text, step=1){
+  go('s-msg'); $('msg-loading').hidden=false; $('msg-error').hidden=true; $('msg-loading-tx').textContent=text; $('msg-back').onclick=()=>go('s-perm');
+  // Iteración P2: dos pasos visibles. Paso 1 abre la cámara; paso 2 carga el detector (no tiene porcentaje, por eso la barra avanza sola)
+  $('msg-step').textContent = `Paso ${step} de 2`;
+  const prog=$('msg-prog'); prog.classList.toggle('indet', step===2); prog.setAttribute('aria-valuenow', step===2 ? '75' : '25');
+  $('msg-fill').style.width = step===2 ? '' : '25%';
+}
 function showError({title, text, steps=[], actions=[]}){
   go('s-msg'); $('msg-loading').hidden=true; $('msg-error').hidden=false;
   $('msg-title').textContent=title; $('msg-text').textContent=text;
@@ -705,7 +754,7 @@ async function startCamera(){
       steps:['Abrí el probador desde su dirección https en Chrome o Safari.','Si lo abriste desde otra app, probá con “Abrir en el navegador”.'],
       actions:[VIEW3D] });
   }
-  showLoading('Preparando la cámara y el detector de manos…');
+  showLoading('Abriendo la cámara…', 1);
   if (S.facing === null) S.facing = isTouch ? 'environment' : 'user';
   try {
     stream = await navigator.mediaDevices.getUserMedia({ audio:false, video:{ facingMode:S.facing, width:{ideal:1280}, height:{ideal:720} } });
@@ -723,6 +772,7 @@ async function startCamera(){
     }
     return showError({ title:'No pudimos abrir la cámara', text:'Algo falló al iniciar la cámara.', steps:['Cerrá otras apps que usen la cámara y volvé a intentar.'], actions:[['Reintentar', startCamera], VIEW3D] });
   }
+  showLoading('Cargando el detector de manos…', 2);
   try { await initHands(); }
   catch (e) {
     stopStream();
@@ -1211,11 +1261,11 @@ function takePhoto(){
     $('photo-cart').textContent = `Agregar al carrito · ${money(CONFIG.models[S.model].price)}`;
   }, 'image/jpeg', 0.92);
 }
-// Instagram: se abre el menú de compartir del celular con la foto (ahí aparece Instagram); si no hay, se descarga
+// Compartir: se abre el menú de compartir del celular con la foto y la persona elige el canal (Instagram, WhatsApp, etc.); si no hay menú, se descarga
 $('photo-share').onclick = async () => {
   const file = new File([photoBlob],'tempo-probador.jpg',{type:'image/jpeg'});
   if (navigator.canShare && navigator.canShare({ files:[file] })) { try { await navigator.share({ files:[file], text:'Me probé el guante Tempo @tempo__ok #DominaTuRitmo' }); } catch(_){} }
-  else { $('photo-save').click(); toast('Guardamos la foto: subila a Instagram y etiquetá a @tempo__ok.'); }
+  else { $('photo-save').click(); toast('Guardamos la foto: compartila donde quieras y etiquetá a @tempo__ok.'); }
 };
 $('photo-redo').onclick = () => startCamera();
 $('photo-back').onclick = () => startCamera();

@@ -498,9 +498,21 @@ function proceduralGlove(modelKey) {
 
 /* ===================== Guante esculpido (malla generada fuera de línea) ===================== */
 let SCULPT = null;
+// Iteración P2: el índice avisa cuánto se descargó del guante para mostrar el porcentaje en la pantalla de carga
+let PROG = null;
+export function onLoadProgress(cb) { PROG = cb; }
+async function fetchBin(url) {
+  const r = await fetch(url); if (!r.ok) throw new Error('bin');
+  const total = +r.headers.get('content-length') || 0;
+  if (!PROG || !total || !r.body) return r.arrayBuffer();
+  const rd = r.body.getReader(), chunks = []; let got = 0;
+  for (;;) { const { done, value } = await rd.read(); if (done) break; chunks.push(value); got += value.length; PROG(Math.min(1, got / total)); }
+  const out = new Uint8Array(got); let o = 0; for (const c of chunks) { out.set(c, o); o += c.length; }
+  return out.buffer;
+}
 async function fetchMesh(base) {
     const [meta, buf] = await Promise.all([fetch(base + '.json').then(r => { if (!r.ok) throw new Error('json'); return r.json(); }),
-                                           fetch(base + '.bin').then(r => { if (!r.ok) throw new Error('bin'); return r.arrayBuffer(); })]);
+                                           fetchBin(base + '.bin')]);
     const nv = meta.counts.v, nf = meta.counts.f; let o = 0;
     const pos = new Float32Array(buf, o, nv * 3); o += nv * 12;
     const nrm = new Int16Array(buf, o, nv * 3); o += nv * 6;
