@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111111">
-<title>Tempo · Probador AR · versión iterada</title>
+<title>Tempo · Probador RA · versión iterada</title>
 <link rel="stylesheet" href="vendor/fonts/fonts.css">
 <style>
 /* Sistema visual del UI Kit "Tempo · Probador AR" (fondo oscuro, acento ámbar, emblema dorado y rojo,
@@ -421,7 +421,7 @@ p{margin:0}
 <section class="screen" id="s-viewer" hidden aria-labelledby="t-viewer">
   <div class="wrap">
     <div class="bar"><button class="icon-btn" id="viewer-back" aria-label="Volver"><svg><use href="#i-back"/></svg></button><span class="kick" id="t-viewer">Visor 3D</span></div>
-    <div id="viewer3d"><button class="tag tl" id="viewer-ar" style="cursor:pointer;padding:6px 10px;font-size:11px">Probalo en AR</button><span class="tag size tr" id="v-size" hidden>Largo 43 cm</span><span class="drag-hint">Arrastrá para girar</span></div>
+    <div id="viewer3d"><button class="tag tl" id="viewer-ar" style="cursor:pointer;padding:6px 10px;font-size:11px">Probátelo en RA</button><span class="tag size tr" id="v-size" hidden>Largo 43 cm</span><span class="drag-hint">Arrastrá para girar</span></div>
     <div class="t3" id="v-name"></div>
     <div class="row" style="display:flex;align-items:center;gap:10px"><div class="swatches" role="radiogroup" aria-label="Color" id="v-colors"></div><span class="price" id="v-price" style="margin-left:auto;font-size:20px"></span></div>
     <div class="footer">
@@ -707,7 +707,15 @@ $('perm-qr').hidden = isTouch;                      // en el celular no hace fal
 $('perm-qr').onclick = showQR;
 $('qr-close').onclick = () => $('qr').hidden = true;
 $('qr').addEventListener('click', e => { if (e.target.id === 'qr') $('qr').hidden = true; });
-$('qr-copy').onclick = async () => { try { await navigator.clipboard.writeText(handoffUrl()); toast('Link copiado.'); } catch(_){ toast('No se pudo copiar el link. Escaneá el código con el celular.'); } };
+function copyText(t){
+  // Camino 1: API moderna (necesita https y permiso). Camino 2: textarea + execCommand, que anda en iframes y navegadores viejos.
+  const legacy = () => { const ta = document.createElement('textarea'); ta.value = t; ta.setAttribute('readonly',''); ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+    document.body.appendChild(ta); ta.focus(); ta.select(); ta.setSelectionRange(0, t.length);
+    let ok = false; try { ok = document.execCommand('copy'); } catch(_){} ta.remove(); return ok ? Promise.resolve() : Promise.reject(new Error('copy')); };
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(t).catch(legacy);
+  return legacy();
+}
+$('qr-copy').onclick = () => { copyText(handoffUrl()).then(() => toast('Link copiado.'), () => toast('No se pudo copiar el link. Escaneá el código con el celular.')); };
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('qr').hidden) $('qr').hidden = true; });
 // Al abrir el link del QR: recuperar la elección y pasar al permiso de cámara
 function resumeFromLink(){

@@ -1,4 +1,4 @@
-# Tempo · Probador AR
+# Tempo · Probador RA
 
 Web app que abre la cámara, detecta la mano y le pone encima un guante de box 3D de Tempo que sigue sus movimientos y se acorta al cerrar el puño. No necesita instalar nada: funciona en el navegador del celular o de la compu.
 
