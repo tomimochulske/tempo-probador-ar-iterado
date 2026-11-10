@@ -363,7 +363,7 @@ p{margin:0}
       <div class="scan-error" id="scan-error" hidden>
         <ul class="tips" id="scan-tips"></ul>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn sec m" id="scan-retry">Reintentar</button><button class="btn sec m" id="scan-flip">Cambiar cámara</button></div>
-        <button class="link u" data-go="s-viewer">Ver el guante en 3D</button>
+        <button class="link u" data-go="s-viewer">Verlo en 3D</button>
       </div>
       <div class="cam-chips">
         <span class="pill">Luz <b id="st-light">—</b></span>
@@ -425,7 +425,7 @@ p{margin:0}
     <div class="t3" id="v-name"></div>
     <div class="row" style="display:flex;align-items:center;gap:10px"><div class="swatches" role="radiogroup" aria-label="Color" id="v-colors"></div><span class="price" id="v-price" style="margin-left:auto;font-size:20px"></span></div>
     <div class="footer">
-      <button class="btn" id="viewer-cam">Probalo en tu mano</button>
+      <button class="btn" id="viewer-cam">Probátelo ahora</button>
       <button class="btn sec" id="viewer-buy">Agregar al carrito</button>
     </div>
   </div>
@@ -795,7 +795,7 @@ function showError({title, text, steps=[], actions=[]}){
   actions.forEach(([label,fn,cls]) => { const b=document.createElement('button'); b.className='btn'+(cls?' '+cls:''); b.textContent=label; b.onclick=fn; a.appendChild(b); });
   $('msg-back').onclick=()=>go('s-reco');
 }
-const VIEW3D = ['Ver el guante en 3D', () => go('s-viewer'), 'ghost'];
+const VIEW3D = ['Verlo en 3D', () => go('s-viewer'), 'sec'];
 
 async function startCamera(){
   if (IS_FILE){
@@ -819,7 +819,7 @@ async function startCamera(){
   }
   if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
     return showError({ title:'Tu navegador no permite usar la cámara acá',
-      text:'La cámara solo funciona en páginas seguras (https) y en navegadores actualizados.',
+      text:'La cámara solo funciona en páginas seguras (https) y en navegadores actualizados. Mientras tanto, podés ver el guante en 3D.',
       steps:['Abrí el probador desde su dirección https en Chrome o Safari.','Si lo abriste desde otra app, probá con “Abrir en el navegador”.'],
       actions:[VIEW3D] });
   }
@@ -836,16 +836,16 @@ async function startCamera(){
         actions:[['Reintentar', startCamera], VIEW3D] });
     }
     if (n === 'NotFoundError' || n === 'OverconstrainedError'){
-      return showError({ title:'No encontramos una cámara', text:'Este dispositivo no tiene una cámara disponible o la está usando otra app.',
+      return showError({ title:'No encontramos una cámara', text:'Este dispositivo no tiene una cámara disponible o la está usando otra app. Podés seguir desde el celular o ver el guante en 3D.',
         steps:['Cerrá otras apps que estén usando la cámara.','Seguí desde el celular con el código QR.'], actions:[['Seguir en el celular', () => { go('s-perm'); showQR(); }], ['Reintentar', startCamera, 'sec'], VIEW3D] });
     }
-    return showError({ title:'No pudimos abrir la cámara', text:'Algo falló al iniciar la cámara.', steps:['Cerrá otras apps que usen la cámara y volvé a intentar.'], actions:[['Reintentar', startCamera], VIEW3D] });
+    return showError({ title:'No pudimos abrir la cámara', text:'Algo falló al iniciar la cámara, pero podés ver el guante en 3D.', steps:['Cerrá otras apps que usen la cámara y volvé a intentar.'], actions:[['Reintentar', startCamera], VIEW3D] });
   }
   showLoading('Cargando el detector de manos…', 2);
   try { await initHands(); }
   catch (e) {
     stopStream();
-    return showError({ title:'No pudimos cargar el detector de manos', text:'Puede ser la conexión o un navegador sin soporte para WebAssembly.',
+    return showError({ title:'No pudimos cargar el detector de manos', text:'Puede ser la conexión o un navegador sin soporte para WebAssembly. Mientras tanto, podés ver el guante en 3D.',
       steps:['Revisá tu conexión y volvé a intentar.','Usá la última versión de Chrome o Safari.'], actions:[['Reintentar', startCamera], VIEW3D] });
   }
   video.srcObject = stream;
