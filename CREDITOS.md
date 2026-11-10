@@ -10,3 +10,4 @@
 - **Tipografías**: Archivo, Lato y Cinzel (SIL Open Font License), en `vendor/fonts/`.
 - **MediaPipe Hands** (Google): Apache 2.0. `vendor/mediapipe-hands/`
 - **three.js**: MIT. `vendor/three/`
+- **QR Code Generator** (Kazuhiko Arase): MIT. `vendor/qrcode/`
