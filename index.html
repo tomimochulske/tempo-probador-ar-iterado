@@ -293,7 +293,7 @@ p{margin:0}
       <button class="chip" role="radio" aria-checked="false" data-val="3">Más de 85 kg</button>
     </div>
     <p class="muted" style="text-align:center">Uso elegido: <b id="uso-label" style="color:var(--accent)">—</b></p>
-    <div class="footer"><button class="btn" id="q2-next" disabled>Ver mi recomendación</button></div>
+    <div class="footer"><button class="btn" id="q2-next" disabled>Ver recomendación</button></div>
   </div>
 </section>
 
@@ -396,7 +396,7 @@ p{margin:0}
       <button class="btn sec" id="photo-share"><svg aria-hidden="true"><use href="#i-share"/></svg>Compartir</button>
       <button class="btn sec" id="photo-redo">Repetir</button>
     </div>
-    <div class="footer"><button class="btn" id="photo-cart">Agregar al carrito</button></div>
+    <div class="footer"><p class="muted" id="photo-price" style="text-align:center;font-size:14px"></p><button class="btn" id="photo-cart">Agregar al carrito</button></div>
   </div>
 </section>
 
@@ -669,10 +669,9 @@ function renderModels(){
     const b = document.createElement('button'); b.className='card model'; b.setAttribute('role','radio'); b.setAttribute('aria-checked', String(key===S.model));
     const av = availableOz(key), cierre = m.desc.split(' · ')[0].split(' ')[0];
     b.innerHTML = `<span class="r1"><strong>${m.name}</strong>${key===ideal?'<span class="tag">Ideal</span>':''}</span><span class="meta">${cierre} · ${av.join(', ')} Oz</span><span class="what"><b>${m.material}</b> · ${m.pitch}</span><span class="r3"><b>${money(m.price)}</b><span class="ok-tx">En stock</span></span>`;
-    b.onclick = () => { S.model=key; wrap.querySelectorAll('.model').forEach(x=>x.setAttribute('aria-checked', String(x===b))); updateOzNotice(); $('reco-next').textContent = 'Probarme el ' + m.name; };
+    b.onclick = () => { S.model=key; wrap.querySelectorAll('.model').forEach(x=>x.setAttribute('aria-checked', String(x===b))); updateOzNotice(); };
     wrap.appendChild(b);
   });
-  $('reco-next').textContent = 'Probarme el ' + CONFIG.models[S.model].name;
 }
 function updateOzNotice(){
   pickTryOz();
@@ -1323,7 +1322,7 @@ function takePhoto(){
     photoBlob=b; if (photoURL) URL.revokeObjectURL(photoURL); photoURL=URL.createObjectURL(b);
     $('photo-img').src=photoURL; $('photo-save').href=photoURL;
     stopCamera(); _go('s-photo'); current='s-photo';
-    $('photo-cart').textContent = `Agregar al carrito · ${money(CONFIG.models[S.model].price)}`;
+    $('photo-price').innerHTML = `${CONFIG.models[S.model].name} · <b style="color:var(--fg)">${money(CONFIG.models[S.model].price)}</b>`;
   }, 'image/jpeg', 0.92);
 }
 // Compartir: se abre el menú de compartir del celular con la foto y la persona elige el canal (Instagram, WhatsApp, etc.); si no hay menú, se descarga
